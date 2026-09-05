@@ -24,3 +24,13 @@
 - **Summary of change:** Documented that the local Dockerfile test needs a healthy Docker Desktop Linux engine (WSL 2 on Windows).
 - **Impacted modules:** Documentation
 - **Risk level:** Low
+
+## 2026-09-05 15:23 IST
+
+- **Files changed:**
+  - `Jenkinsfile`
+  - `README.md`
+  - `ai-context/change-log.md`
+- **Summary of change:** Fixed the Jenkins pipeline to run Maven from the repository root (where `pom.xml` lives) and documented that a `dir('jenkins-java-docker')` step caused the missing POM failure.
+- **Impacted modules:** Jenkins pipeline, documentation
+- **Risk level:** Low

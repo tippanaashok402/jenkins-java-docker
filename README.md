@@ -35,12 +35,41 @@ If `docker build` returns a 500 error, Docker Desktop is open but the Linux engi
 
 ## Jenkins
 
-1. Create a Pipeline job and point it at this repository.
-2. Use `Jenkinsfile` as the pipeline definition.
-3. The Jenkins agent needs the Docker CLI and permission to talk to the Docker daemon.
+`pom.xml` is at the **repository root**. Do not run Maven inside a `jenkins-java-docker` subfolder.
 
-The pipeline:
+Preferred job setup (Pipeline script from SCM):
 
-1. Builds `jenkins-java-demo:<BUILD_NUMBER>`
-2. Runs the container
-3. Fails the job if the greeting or `Status: OK` is missing
+1. Create a Pipeline job.
+2. Definition: **Pipeline script from SCM**
+3. SCM: Git
+4. Repository URL: `https://github.com/tippanaashok402/jenkins-java-docker.git`
+5. Branch: `*/main`
+6. Script Path: `Jenkinsfile`
+
+The Jenkins agent needs Maven (for the Build stage) and the Docker CLI (for the image stages).
+
+If you paste the pipeline into the job instead, clone into the workspace root and run Maven there:
+
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage('git clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/tippanaashok402/jenkins-java-docker.git'
+            }
+        }
+        stage('build') {
+            steps {
+                sh 'mvn -B test'
+            }
+        }
+    }
+}
+```
+
+The pipeline in `Jenkinsfile`:
+
+1. Runs `mvn -B test` from the repo root
+2. Builds `jenkins-java-demo:<BUILD_NUMBER>`
+3. Runs the container and fails if the greeting or `Status: OK` is missing

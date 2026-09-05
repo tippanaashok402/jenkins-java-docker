@@ -11,6 +11,13 @@ pipeline {
     }
 
     stages {
+        stage('Build') {
+            steps {
+                // pom.xml is at the repo root. Do not cd into a subfolder.
+                sh 'mvn -B test'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest ."
