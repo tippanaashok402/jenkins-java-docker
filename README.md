@@ -46,7 +46,7 @@ Preferred job setup (Pipeline script from SCM):
 5. Branch: `*/main`
 6. Script Path: `Jenkinsfile`
 
-The Jenkins agent needs Maven (for the Build stage) and the Docker CLI (for the image stages).
+The Jenkins agent needs Maven (for the Build stage) and the Docker CLI (for the image stages). If the agent uses Podman as `docker`, the Dockerfile already uses fully qualified images (`docker.io/library/...`) so Podman does not try to prompt for a registry.
 
 If you paste the pipeline into the job instead, clone into the workspace root and run Maven there:
 

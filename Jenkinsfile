@@ -4,6 +4,8 @@ pipeline {
     environment {
         IMAGE_NAME = 'jenkins-java-demo'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
+        // Jenkins is using Podman as docker. These help rootless builds.
+        BUILDAH_ISOLATION = 'chroot'
     }
 
     options {

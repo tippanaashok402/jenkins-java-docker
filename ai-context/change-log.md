@@ -34,3 +34,14 @@
 - **Summary of change:** Fixed the Jenkins pipeline to run Maven from the repository root (where `pom.xml` lives) and documented that a `dir('jenkins-java-docker')` step caused the missing POM failure.
 - **Impacted modules:** Jenkins pipeline, documentation
 - **Risk level:** Low
+
+## 2026-09-05 15:30 IST
+
+- **Files changed:**
+  - `Dockerfile`
+  - `Jenkinsfile`
+  - `README.md`
+  - `ai-context/change-log.md`
+- **Summary of change:** Switched Dockerfile base images to fully qualified `docker.io/library/...` names so Podman on Jenkins can pull without a TTY short-name prompt, and set `BUILDAH_ISOLATION=chroot` for rootless builds.
+- **Impacted modules:** Docker image build, Jenkins pipeline
+- **Risk level:** Low
