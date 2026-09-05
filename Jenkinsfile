@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'jenkins-java-demo'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
+        DOCKERHUB_USER = 'ashok402'
         // Jenkins is using Podman as docker. These help rootless builds.
         BUILDAH_ISOLATION = 'chroot'
     }
@@ -37,6 +38,31 @@ pipeline {
                     echo "Dockerfile test PASSED"
                 '''
             }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub',
+                    usernameVariable: 'DOCKERHUB_CRED_USER',
+                    passwordVariable: 'DOCKERHUB_PASS'
+                )]) {
+                    sh '''
+                        set -eu
+                        echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
+                        docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "docker.io/${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+                        docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "docker.io/${DOCKERHUB_USER}/${IMAGE_NAME}:latest"
+                        docker push "docker.io/${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+                        docker push "docker.io/${DOCKERHUB_USER}/${IMAGE_NAME}:latest"
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker logout || true'
         }
     }
 }

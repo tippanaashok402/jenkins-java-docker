@@ -73,3 +73,30 @@ The pipeline in `Jenkinsfile`:
 1. Runs `mvn -B test` from the repo root
 2. Builds `jenkins-java-demo:<BUILD_NUMBER>`
 3. Runs the container and fails if the greeting or `Status: OK` is missing
+4. Pushes `docker.io/ashok402/jenkins-java-demo:<BUILD_NUMBER>` and `:latest` to Docker Hub
+
+## Push to Docker Hub
+
+Docker Hub user: `ashok402`
+
+Create a Jenkins credential first:
+
+1. Jenkins → Manage Jenkins → Credentials
+2. Add Credentials → Username with password
+3. ID: `dockerhub`
+4. Username: `ashok402`
+5. Password: a Docker Hub **access token** (Account Settings → Security → New Access Token)
+
+The pipeline logs in and pushes:
+
+`docker.io/ashok402/jenkins-java-demo:<build-number>`  
+`docker.io/ashok402/jenkins-java-demo:latest`
+
+Manual commands:
+
+```bash
+docker build -t jenkins-java-demo:test .
+docker tag jenkins-java-demo:test docker.io/ashok402/jenkins-java-demo:test
+docker login -u ashok402
+docker push docker.io/ashok402/jenkins-java-demo:test
+```

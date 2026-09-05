@@ -45,3 +45,23 @@
 - **Summary of change:** Switched Dockerfile base images to fully qualified `docker.io/library/...` names so Podman on Jenkins can pull without a TTY short-name prompt, and set `BUILDAH_ISOLATION=chroot` for rootless builds.
 - **Impacted modules:** Docker image build, Jenkins pipeline
 - **Risk level:** Low
+
+## 2026-09-05 16:11 IST
+
+- **Files changed:**
+  - `Jenkinsfile`
+  - `README.md`
+  - `ai-context/change-log.md`
+- **Summary of change:** Added a Jenkins stage that logs in with the `dockerhub` credential and pushes the built image (`:BUILD_NUMBER` and `:latest`) to Docker Hub.
+- **Impacted modules:** Jenkins pipeline, Docker Hub publish
+- **Risk level:** Medium
+
+## 2026-09-05 16:14 IST
+
+- **Files changed:**
+  - `Jenkinsfile`
+  - `README.md`
+  - `ai-context/change-log.md`
+- **Summary of change:** Set the Docker Hub namespace to `ashok402` so Jenkins pushes `docker.io/ashok402/jenkins-java-demo`.
+- **Impacted modules:** Jenkins pipeline, Docker Hub publish
+- **Risk level:** Low
