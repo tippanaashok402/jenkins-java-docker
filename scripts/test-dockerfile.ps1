@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$ImageName = "jenkins-java-demo:test"
+$ImageName = "jenkins-python-demo:test"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 
 Write-Host "Building $ImageName from $ProjectRoot"
@@ -17,11 +17,11 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host $output
 
-if ($output -notmatch "Hello from Jenkins Docker Java app") {
+if ($output -notmatch "Hello from Jenkins Docker Python app") {
     throw "Dockerfile test failed: greeting not found in container output"
 }
 
-if ($output -notmatch "Status: OK") {
+if ($output -notmatch "Status: READY") {
     throw "Dockerfile test failed: status line not found in container output"
 }
 

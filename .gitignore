@@ -1,5 +1,6 @@
-target/
+__pycache__/
+*.pyc
+.pytest_cache/
 .idea/
 .vscode/
-*.iml
 .DS_Store

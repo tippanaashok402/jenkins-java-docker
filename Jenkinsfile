@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'jenkins-java-demo'
+        IMAGE_NAME = 'jenkins-python-demo'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOCKERHUB_USER = 'ashok402'
-        // Jenkins is using Podman as docker. These help rootless builds.
         BUILDAH_ISOLATION = 'chroot'
     }
 
@@ -14,10 +13,21 @@ pipeline {
     }
 
     stages {
+        stage('Compile') {
+            steps {
+                sh 'python3 -m compileall -f app.py test_app.py'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'python3 -m unittest test_app.py -v'
+            }
+        }
+
         stage('Build') {
             steps {
-                // pom.xml is at the repo root. Do not cd into a subfolder.
-                sh 'mvn -B test'
+                sh 'python3 app.py'
             }
         }
 
@@ -33,8 +43,8 @@ pipeline {
                     set -eu
                     output=$(docker run --rm ${IMAGE_NAME}:${IMAGE_TAG})
                     echo "$output"
-                    echo "$output" | grep -q "Hello from Jenkins Docker Java app"
-                    echo "$output" | grep -q "Status: OK"
+                    echo "$output" | grep -q "Hello from Jenkins Docker Python app"
+                    echo "$output" | grep -q "Status: READY"
                     echo "Dockerfile test PASSED"
                 '''
             }

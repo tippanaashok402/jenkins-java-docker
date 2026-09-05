@@ -1,103 +1,82 @@
-# Jenkins Java Docker Demo
+# Jenkins Python Docker Demo
 
-A small Maven Java 17 app that Jenkins builds as a Docker image and then runs to prove the Dockerfile works.
+A small Python app that Jenkins tests, builds as a Docker image, pushes to Docker Hub, then wipes the workspace with `cleanWs()`.
 
 ## What you get
 
-- Maven Java project (`com.digitral.demo.App`)
-- Multi-stage `Dockerfile` (Maven build + JRE runtime)
-- `Jenkinsfile` that builds and tests the image
-- Local PowerShell test: `scripts/test-dockerfile.ps1`
+- Python app (`app.py`)
+- Unit tests (`test_app.py`)
+- `Dockerfile` (Python 3.12 Alpine)
+- `Jenkinsfile` that compiles, tests, builds, pushes, and cleans up
 
-## Local Dockerfile test
+## Expected container output
 
-Docker Desktop must be running. Java and Maven are not required on the host.
+```text
+Hello from Jenkins Docker Python app
+Python version: 3.12.x
+Runtime: CPython
+Status: READY
+```
+
+## Local test
 
 ```powershell
+python -m compileall -f app.py test_app.py
+python -m unittest test_app.py -v
+python app.py
 .\scripts\test-dockerfile.ps1
 ```
 
-Or run the same steps by hand:
+Or by hand:
 
 ```powershell
-docker build -t jenkins-java-demo:test .
-docker run --rm jenkins-java-demo:test
+docker build -t jenkins-python-demo:test .
+docker run --rm jenkins-python-demo:test
 ```
-
-Expected output includes:
-
-```text
-Hello from Jenkins Docker Java app
-Status: OK
-```
-
-If `docker build` returns a 500 error, Docker Desktop is open but the Linux engine is not ready. On Windows that usually means WSL 2 is missing. Install it from an Administrator terminal (`wsl --install`), restart Windows, start Docker Desktop, then run the test again.
 
 ## Jenkins
 
-`pom.xml` is at the **repository root**. Do not run Maven inside a `jenkins-java-docker` subfolder.
-
-Preferred job setup (Pipeline script from SCM):
+`app.py` is at the **repository root**.
 
 1. Create a Pipeline job.
 2. Definition: **Pipeline script from SCM**
-3. SCM: Git
-4. Repository URL: `https://github.com/tippanaashok402/jenkins-java-docker.git`
-5. Branch: `*/main`
-6. Script Path: `Jenkinsfile`
+3. Repository URL: `https://github.com/tippanaashok402/jenkins-java-docker.git`
+4. Branch: `*/main`
+5. Script Path: `Jenkinsfile`
 
-The Jenkins agent needs Maven (for the Build stage) and the Docker CLI (for the image stages). If the agent uses Podman as `docker`, the Dockerfile already uses fully qualified images (`docker.io/library/...`) so Podman does not try to prompt for a registry.
+The Jenkins agent needs `python3` and permission to use Docker.
 
-If you paste the pipeline into the job instead, clone into the workspace root and run Maven there:
+The pipeline:
 
-```groovy
-pipeline {
-    agent any
-    stages {
-        stage('git clone') {
-            steps {
-                git branch: 'main', url: 'https://github.com/tippanaashok402/jenkins-java-docker.git'
-            }
-        }
-        stage('build') {
-            steps {
-                sh 'mvn -B test'
-            }
-        }
-    }
-}
-```
+1. **Compile** — `python3 -m compileall -f app.py test_app.py`
+2. **Test** — `python3 -m unittest test_app.py -v`
+3. **Build** — `python3 app.py`
+4. Builds and tests the Docker image
+5. Pushes `docker.io/ashok402/jenkins-python-demo`
+6. Runs `cleanWs()`
 
-The pipeline in `Jenkinsfile`:
-
-1. Runs `mvn -B test` from the repo root
-2. Builds `jenkins-java-demo:<BUILD_NUMBER>`
-3. Runs the container and fails if the greeting or `Status: OK` is missing
-4. Pushes `docker.io/ashok402/jenkins-java-demo:<BUILD_NUMBER>` and `:latest` to Docker Hub
-5. Removes local images and wipes the Jenkins workspace with `cleanWs()` (needs the Workspace Cleanup plugin)
+If `docker build` fails with `permission denied ... docker.sock`, add the `jenkins` user to the `docker` group on the Jenkins server and restart Jenkins.
 
 ## Push to Docker Hub
 
 Docker Hub user: `ashok402`
 
-Create a Jenkins credential first:
+Create a Jenkins credential:
 
-1. Jenkins → Manage Jenkins → Credentials
-2. Add Credentials → Username with password
-3. ID: `dockerhub`
-4. Username: `ashok402`
-5. Password: a Docker Hub **access token** (Account Settings → Security → New Access Token)
+1. ID: `dockerhub`
+2. Username: `ashok402`
+3. Password: Docker Hub access token
 
-The pipeline logs in and pushes:
+The pipeline pushes:
 
-`docker.io/ashok402/jenkins-java-demo:<build-number>`  
-`docker.io/ashok402/jenkins-java-demo:latest`
+`docker.io/ashok402/jenkins-python-demo:<BUILD_NUMBER>`  
+`docker.io/ashok402/jenkins-python-demo:latest`
 
 Manual commands:
 
 ```bash
-docker build -t jenkins-java-demo:test .
-docker tag jenkins-java-demo:test docker.io/ashok402/jenkins-java-demo:test
+docker build -t jenkins-python-demo:test .
+docker tag jenkins-python-demo:test docker.io/ashok402/jenkins-python-demo:test
 docker login -u ashok402
-docker push docker.io/ashok402/jenkins-java-demo:test
+docker push docker.io/ashok402/jenkins-python-demo:test
 ```

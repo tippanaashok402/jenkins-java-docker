@@ -2,7 +2,8 @@
 .gitignore
 .idea
 .vscode
-target
+__pycache__
+*.pyc
 Jenkinsfile
 README.md
 ai-context

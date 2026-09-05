@@ -94,3 +94,40 @@
 - **Summary of change:** Switched workspace cleanup to the plain `cleanWs()` step in the Cleanup Workspace stage and in `post { always }`.
 - **Impacted modules:** Jenkins pipeline
 - **Risk level:** Low
+
+## 2026-09-05 16:33 IST
+
+- **Files changed:**
+  - `python-app/app.py`
+  - `python-app/test_app.py`
+  - `python-app/requirements.txt`
+  - `python-app/Dockerfile`
+  - `python-app/.dockerignore`
+  - `python-app/Jenkinsfile`
+  - `python-app/README.md`
+  - `README.md`
+  - `ai-context/change-log.md`
+- **Summary of change:** Added a Python demo with the same Jenkins/Docker Hub flow as the Java app, but with different runtime output (`Status: READY` instead of `Status: OK`).
+- **Impacted modules:** Python application, Docker image build, Jenkins pipeline
+- **Risk level:** Low
+
+## 2026-09-05 16:34 IST
+
+- **Files changed:**
+  - Added: `app.py`, `test_app.py`, `requirements.txt`
+  - Updated: `Dockerfile`, `Jenkinsfile`, `README.md`, `.gitignore`, `.dockerignore`, `scripts/test-dockerfile.ps1`
+  - Removed: `pom.xml`, `src/**`, `python-app/**`
+  - `ai-context/change-log.md`
+- **Summary of change:** Removed the Java Maven project and moved the Python app to the repository root. Jenkins now tests, builds, and pushes `jenkins-python-demo`.
+- **Impacted modules:** Application, Docker image, Jenkins pipeline
+- **Risk level:** Medium
+
+## 2026-09-05 16:35 IST
+
+- **Files changed:**
+  - `Jenkinsfile`
+  - `README.md`
+  - `ai-context/change-log.md`
+- **Summary of change:** Split the Python job into explicit Compile, Test, and Build stages with matching `python3` commands.
+- **Impacted modules:** Jenkins pipeline
+- **Risk level:** Low
