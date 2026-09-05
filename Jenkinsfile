@@ -58,11 +58,25 @@ pipeline {
                 }
             }
         }
+
+        stage('Cleanup Workspace') {
+            steps {
+                sh '''
+                    docker rmi -f \
+                      "${IMAGE_NAME}:${IMAGE_TAG}" \
+                      "${IMAGE_NAME}:latest" \
+                      "docker.io/${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}" \
+                      "docker.io/${DOCKERHUB_USER}/${IMAGE_NAME}:latest" || true
+                '''
+                cleanWs()
+            }
+        }
     }
 
     post {
         always {
             sh 'docker logout || true'
+            cleanWs()
         }
     }
 }

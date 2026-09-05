@@ -65,3 +65,32 @@
 - **Summary of change:** Set the Docker Hub namespace to `ashok402` so Jenkins pushes `docker.io/ashok402/jenkins-java-demo`.
 - **Impacted modules:** Jenkins pipeline, Docker Hub publish
 - **Risk level:** Low
+
+## 2026-09-05 16:24 IST
+
+- **Files changed:**
+  - `Jenkinsfile`
+  - `README.md`
+  - `ai-context/change-log.md`
+- **Summary of change:** Added a final Cleanup Workspace stage (and a post-always `deleteDir`) to remove local Docker tags and wipe the Jenkins workspace after the Docker Hub push.
+- **Impacted modules:** Jenkins pipeline
+- **Risk level:** Low
+
+## 2026-09-05 16:26 IST
+
+- **Files changed:**
+  - `Jenkinsfile`
+  - `README.md`
+  - `ai-context/change-log.md`
+- **Summary of change:** Replaced `deleteDir()` with `cleanWs()` so workspace cleanup uses the Workspace Cleanup plugin.
+- **Impacted modules:** Jenkins pipeline
+- **Risk level:** Low
+
+## 2026-09-05 16:28 IST
+
+- **Files changed:**
+  - `Jenkinsfile`
+  - `ai-context/change-log.md`
+- **Summary of change:** Switched workspace cleanup to the plain `cleanWs()` step in the Cleanup Workspace stage and in `post { always }`.
+- **Impacted modules:** Jenkins pipeline
+- **Risk level:** Low

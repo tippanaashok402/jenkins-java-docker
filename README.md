@@ -74,6 +74,7 @@ The pipeline in `Jenkinsfile`:
 2. Builds `jenkins-java-demo:<BUILD_NUMBER>`
 3. Runs the container and fails if the greeting or `Status: OK` is missing
 4. Pushes `docker.io/ashok402/jenkins-java-demo:<BUILD_NUMBER>` and `:latest` to Docker Hub
+5. Removes local images and wipes the Jenkins workspace with `cleanWs()` (needs the Workspace Cleanup plugin)
 
 ## Push to Docker Hub
 
